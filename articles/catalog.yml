@@ -2,10 +2,8 @@ PREDEF:
   - preface.re
 
 CHAPS:
-#  - article.re
-
-# EVカート概要
-  - evkart_overview.re 
+  - evkart_overview.re
+  - model_exp.re
 
 APPENDIX:
 
