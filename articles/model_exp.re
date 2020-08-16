@@ -52,7 +52,13 @@ TODO: ここにホールセンサ読み込み値とパターンの表を書く�
 ホールセンサーパターンを入力すると該当する通電ステージ（1〜6）を返します。
 異常なホールセンサーパターンが入力された場合は0を返します。
 
-=== 通電ステージ→通電パターン取得
+=== 通電ステージ→通電パターン取得機能
+@<img>{SelectPWMPattern}は通電ステージ→通電パターン取得機能です。
+//image[SelectPWMPattern][通電ステージ→通電パターン取得機能]{
+//}
+ステージによりどのFETをPWM制御するか、ON・OFFするか通電パターンを取得します。
+異常な通電ステージ（0）の場合、defaultケースの通電パターンが選択となります。
+defaultケースではすべてのFETをOFFし、通電を行いません。
 
 ==== 通電ステージ1
 @<img>{PWMPattern_Stage_1}は通電ステージ1の制御ブロックです。
@@ -62,12 +68,44 @@ TODO: ここにホールセンサ読み込み値とパターンの表を書く�
 通電ステージ1の場合は、
 
  * U相High側FETがPWM制御、V相Low側FETがHighレベル、その他のFETはLowレベル
+
 の通電パターンです。
+6つの信号をBus Creatorブロックでバス化（1本の信号線として扱えるように）しています。
+上からU相High側FET、V相High側FET、W相High側FET、U相Low側FET、V相Low側FET、W相Low側FETの信号です。
+後段のブロックで各信号線を各FETに接続しています。
+通電ステージ2〜6も同様にSwitchCase BlockのCase条件にFETの通電パターンを記述しています。
 
-== FET駆動
+== FET駆動機能
+@<img>{FETDrive}はFET駆動機能です。
+//image[FETDrive][FET駆動機能（赤枠内部）]{
+//}
+@<hd>{PWM通電パターン取得機能}出力の複数の信号（バス信号）をBusSelectorブロックで1つの信号として取り出します。
+上からU相High側FET、V相High側FET、W相High側FET、U相Low側FET、V相Low側FET、W相Low側FETの信号です。
 
-== スロットル開度取得
+High側FETは通電パターンによりPWM制御することがあるためPWMブロックを接続しています。
+
+Low側FETは出力端子のレベルを制御するためDigital Writeブロックを接続しています。
 
 
-== パイロットLED点滅
+== スロットル開度取得機能
+@<img>{GetAccelValue}はスロットル開度取得機能です。
+//image[GetAccelValue][スロットル開度取得機能（赤枠内部）]{
+//}
 
+
+== パイロットLED点滅機能
+@<img>{TogglePilotLED_top}はパイロットLED点滅機能のトップ階層です。
+//image[TogglePilotLED_top][パイロットLED点滅機能トップ階層（赤枠内部）]{
+//}
+書き込まれたモデルが動作しているか目視確認する意図でArduino MEGAに実装されているLEDを2秒周期で点滅しています。
+モーター制御とは関係がない動作です。
+LED点滅のロジックはSubsystemブロック内部で実行しています。
+この機能はPulse Generatorブロックにより1秒周期で呼び出されます。
+
+@<img>{TogglePilotLED}はパイロットLED点滅機能の制御ロジックです。
+//image[TogglePilotLED][パイロットLED点滅機能の制御ロジック]{
+//}
+固定値1と前回の出力値（初期値は0）のXOR論理演算を行います。
+結果、LEDが点滅します。
+このSubsystemは1秒周期で呼び出されますが、Pulse Generatorブロックの「立ち上がり」で動作するよう設定しています。
+その結果、2秒周期でLEDは点滅します。
