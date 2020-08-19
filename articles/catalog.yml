@@ -3,7 +3,6 @@ PREDEF:
 
 CHAPS:
   - what_evkart.re
-  - evkart_overview.re
   - mbd_change_point.re
   - model_exp.re
   - validation.re

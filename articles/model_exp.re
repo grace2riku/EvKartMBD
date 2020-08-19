@@ -91,7 +91,15 @@ Low側FETは出力端子のレベルを制御するためDigital Writeブロッ�
 @<img>{GetAccelValue}はスロットル開度取得機能です。
 //image[GetAccelValue][スロットル開度取得機能（赤枠内部）]{
 //}
+カートの速度調整はスロットルを使います。
+スロットルの開度はインバーター基板に0〜5Vの電圧で入力されAnalog InputブロックでAD変換しています。
+AD変換値はFET High側のPWMブロックの設定値として使用しています。
+AD変換値が大きいほどPWM制御のOn Duty幅も大きく、モータ回転数も高くなりカートは早く走ります。
+トップ階層でDataStoreWrite、DataStoreMemoryブロックでスロットル開度を保存しています。
+保存したスロットル開度は@<img>{PWMPattern_Stage_1}通電ステージ1〜6のDataStoreReadブロックで参照し、FET High側のPWM設定値にしています。
+スロットル開度はC言語のグローバル関数のように使っています。
 
+AD変換値をDivideブロックで4で割っていますが、これはAnalog Inputブロック分解能10bitをPWMブロックの分解能8bitに合わせているためです。
 
 == パイロットLED点滅機能
 @<img>{TogglePilotLED_top}はパイロットLED点滅機能のトップ階層です。
