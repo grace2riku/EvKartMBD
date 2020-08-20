@@ -39,7 +39,8 @@ Arduino基板表面にあるピンヘッダを治具基板に指す形になる�
 これでモデルベース開発をおこなうためのハードウェアの準備が完了です。
 
 
-=== Arduino MEGA
+=== CPU
+==== Arduino MEGA
 デフォルトのEVカートCPU基板からArduino MEGAに変更します。
 
 @<img>{arduino_Mega}はArduino MEGAの写真です。
@@ -52,7 +53,31 @@ Arduino基板表面にあるピンヘッダを治具基板に指す形になる�
  　
  　他にラズベリーパイも対応しているがEVカートの制御内容・ボリュームを考えるとArduinoの性能で充分と感じたから。
 
- * Arduinoシリーズで安価なUNOではなく、MEGAを選択した理由は後述しているシミュレーションができるから。
+ * Arduinoは安いから。安価なUNOではなく、MEGAを選択した理由は後述しているシミュレーションができるから。
+
+==== Arduino MEGAピン配置
+
+@<img>{arduino_mega_pinout}はArduino MEGAのピン配置です。
+//image[arduino_mega_pinout][Arduino MEGAピン配置]{
+//}
+
+//table[arduino_mega_pinout_table][Arduino MEGAピン配置表]{ 
+.	信号名称		Arduinoピン番号 
+------------------------------------
+1	ホールセンサU相	19
+2	ホールセンサV相	20
+3	ホールセンサW相	21
+4	U相FET High側	5
+5	U相FET Low側	2
+6	V相FET High側	3
+7	V相FET Low側	6
+8	W相FET High側	7
+9	W相FET Low側	8
+10	スロットル		A0
+11	パイロットLED	13
+//}
+
+モーター制御に使う信号は表のArduino MEGAの各ピンに割り当てています。
 
 
 == 開発環境
@@ -87,5 +112,5 @@ Simulink        バージョン 10.0          (R2019b)
 
 「Simulink Support Package for Arduino Hardware」とはSimulinkがサポートしているハードウェアのことです。
 
-このサポートパッケージ対応しているハードウェアはSimulinkがハードウェアのオブジェクトファイルをつくれます。
+このサポートパッケージ対応しているハードウェアはSimulinkがオブジェクトファイルをつくれます。
 
