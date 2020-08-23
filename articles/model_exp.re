@@ -129,7 +129,7 @@ defaultケースではすべてのFETをOFFし、通電を行いません。
 @<list>{setFETPattern}はC言語のソースコードです。
 
 通電ステージ1のときanalogWrite関数で@<table>{hallpattern_fet_stage_table}のとおりに通電設定している処理になっています。
-//listnum[setFETPattern][FET通電パターン設定]{
+//listnum[setFETPattern][FET通電パターン設定 通電ステージ1]{
 void setFETDrivePattern()
 {
 	byte hallSensorPosition;	// ホールセンサー位置
@@ -149,6 +149,189 @@ void setFETDrivePattern()
 			digitalWrite(FET_WL_PORT, LOW);      
 			break;
 //}
+
+==== 通電ステージ2
+@<img>{PWMPattern_Stage_2}は通電ステージ2の制御ブロックです。
+//image[PWMPattern_Stage_2][通電ステージ2]{
+//}
+
+@<list>{setFETPattern_stage_2}はC言語のソースコードです。
+
+//listnum[setFETPattern_stage_2][FET通電パターン設定 通電ステージ2]{
+void setFETDrivePattern()
+{
+	byte hallSensorPosition;	// ホールセンサー位置
+	
+	hallSensorPosition = digitalRead(HALL_W_PORT) << 2 | 
+						digitalRead(HALL_V_PORT) << 1 | 
+						digitalRead(HALL_U_PORT);
+	
+	switch(hallSensorPosition) {
+		/* 省略 */
+
+		/* ホールセンサ入力位置:W=0, V=0, U=1 */
+		case HALL_SENSOR_POSITION_1: /* FET通電ステージ2:UH=PWM, VH=0, WH=0, UL=0, VL=0, WL=1 */
+		analogWrite(FET_UH_PORT, pwmDuty);
+		analogWrite(FET_VH_PORT, 0);
+		analogWrite(FET_WH_PORT, 0);
+		digitalWrite(FET_UL_PORT, LOW);
+		digitalWrite(FET_VL_PORT, LOW);
+		digitalWrite(FET_WL_PORT, HIGH);      
+			break;
+//}
+
+==== 通電ステージ3
+@<img>{PWMPattern_Stage_3}は通電ステージ3の制御ブロックです。
+//image[PWMPattern_Stage_3][通電ステージ3]{
+//}
+
+@<list>{setFETPattern_stage_3}はC言語のソースコードです。
+
+//listnum[setFETPattern_stage_3][FET通電パターン設定 通電ステージ3]{
+void setFETDrivePattern()
+{
+	byte hallSensorPosition;	// ホールセンサー位置
+	
+	hallSensorPosition = digitalRead(HALL_W_PORT) << 2 | 
+						digitalRead(HALL_V_PORT) << 1 | 
+						digitalRead(HALL_U_PORT);
+	
+	switch(hallSensorPosition) {
+		/* 省略 */
+
+		/* ホールセンサ入力位置:W=0, V=1, U=1 */
+		case HALL_SENSOR_POSITION_3: /* FET通電ステージ3:UH=0, VH=PWM, WH=0, UL=0, VL=0, WL=1 */
+		analogWrite(FET_UH_PORT, 0);
+		analogWrite(FET_VH_PORT, pwmDuty);
+		analogWrite(FET_WH_PORT, 0);
+		digitalWrite(FET_UL_PORT, LOW);
+		digitalWrite(FET_VL_PORT, LOW);
+		digitalWrite(FET_WL_PORT, HIGH);      
+			break;
+//}
+
+==== 通電ステージ4
+@<img>{PWMPattern_Stage_4}は通電ステージ4の制御ブロックです。
+//image[PWMPattern_Stage_4][通電ステージ4]{
+//}
+
+@<list>{setFETPattern_stage_4}はC言語のソースコードです。
+
+//listnum[setFETPattern_stage_4][FET通電パターン設定 通電ステージ4]{
+void setFETDrivePattern()
+{
+	byte hallSensorPosition;	// ホールセンサー位置
+	
+	hallSensorPosition = digitalRead(HALL_W_PORT) << 2 | 
+						digitalRead(HALL_V_PORT) << 1 | 
+						digitalRead(HALL_U_PORT);
+	
+	switch(hallSensorPosition) {
+		/* 省略 */
+
+		/* ホールセンサ入力位置:W=0, V=1, U=0 */
+		case HALL_SENSOR_POSITION_2: /* FET通電ステージ4:UH=0, VH=PWM, WH=0, UL=1, VL=0, WL=0 */
+			analogWrite(FET_UH_PORT, 0);
+			analogWrite(FET_VH_PORT, pwmDuty);
+			analogWrite(FET_WH_PORT, 0);
+			digitalWrite(FET_UL_PORT, HIGH);
+			digitalWrite(FET_VL_PORT, LOW);
+			digitalWrite(FET_WL_PORT, LOW);      
+				break;
+//}
+
+
+==== 通電ステージ5
+@<img>{PWMPattern_Stage_5}は通電ステージ5の制御ブロックです。
+//image[PWMPattern_Stage_5][通電ステージ5]{
+//}
+
+@<list>{setFETPattern_stage_5}はC言語のソースコードです。
+
+//listnum[setFETPattern_stage_5][FET通電パターン設定 通電ステージ5]{
+void setFETDrivePattern()
+{
+	byte hallSensorPosition;	// ホールセンサー位置
+	
+	hallSensorPosition = digitalRead(HALL_W_PORT) << 2 | 
+						digitalRead(HALL_V_PORT) << 1 | 
+						digitalRead(HALL_U_PORT);
+	
+	switch(hallSensorPosition) {
+		/* 省略 */
+
+		/* ホールセンサ入力位置:W=1, V=1, U=0 */
+		case HALL_SENSOR_POSITION_6: /* FET通電ステージ5:UH=0, VH=0, WH=PWM, UL=1, VL=0, WL=0 */
+			analogWrite(FET_UH_PORT, 0);
+			analogWrite(FET_VH_PORT, 0);
+			analogWrite(FET_WH_PORT, pwmDuty);
+			digitalWrite(FET_UL_PORT, HIGH);
+			digitalWrite(FET_VL_PORT, LOW);
+			digitalWrite(FET_WL_PORT, LOW);      
+				break;
+//}
+
+==== 通電ステージ6
+@<img>{PWMPattern_Stage_6}は通電ステージ5の制御ブロックです。
+//image[PWMPattern_Stage_6][通電ステージ6]{
+//}
+
+@<list>{setFETPattern_stage_6}はC言語のソースコードです。
+
+//listnum[setFETPattern_stage_6][FET通電パターン設定 通電ステージ6]{
+void setFETDrivePattern()
+{
+	byte hallSensorPosition;	// ホールセンサー位置
+	
+	hallSensorPosition = digitalRead(HALL_W_PORT) << 2 | 
+						digitalRead(HALL_V_PORT) << 1 | 
+						digitalRead(HALL_U_PORT);
+	
+	switch(hallSensorPosition) {
+		/* 省略 */
+
+		/* ホールセンサ入力位置:W=1, V=0, U=0 */
+		case HALL_SENSOR_POSITION_4: /* FET通電ステージ6:UH=0, VH=0, WH=PWM, UL=0, VL=1, WL=0 */
+			analogWrite(FET_UH_PORT, 0);
+			analogWrite(FET_VH_PORT, 0);
+			analogWrite(FET_WH_PORT, pwmDuty);
+			digitalWrite(FET_UL_PORT, LOW);
+			digitalWrite(FET_VL_PORT, HIGH);
+			digitalWrite(FET_WL_PORT, LOW);      
+			break;
+//}
+
+==== 異常
+@<img>{PWMPattern_Stage_deafult}は異常の場合の制御ブロックです。
+//image[PWMPattern_Stage_deafult][通電ステージ異常]{
+//}
+
+@<list>{setFETPattern_stage_default}はC言語のソースコードです。
+
+//listnum[setFETPattern_stage_default][FET通電パターン設定 異常]{
+void setFETDrivePattern()
+{
+	byte hallSensorPosition;	// ホールセンサー位置
+	
+	hallSensorPosition = digitalRead(HALL_W_PORT) << 2 | 
+						digitalRead(HALL_V_PORT) << 1 | 
+						digitalRead(HALL_U_PORT);
+	
+	switch(hallSensorPosition) {
+		/* 省略 */
+
+		default:
+			analogWrite(FET_UH_PORT, 0);
+			analogWrite(FET_VH_PORT, 0);
+			analogWrite(FET_WH_PORT, 0);
+			digitalWrite(FET_UL_PORT, LOW);
+			digitalWrite(FET_VL_PORT, LOW);
+			digitalWrite(FET_WL_PORT, LOW);      
+			break;
+	}
+  
+//}
+
 
 == FET駆動機能
 @<img>{FETDrive}はFET駆動機能です。
