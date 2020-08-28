@@ -2,10 +2,13 @@
 //footnote[github_EVKartArduinoIDE][https://github.com/grace2riku/EVKartArduinoIDE.git]
 //footnote[github_EVKartArduinoSimulink][https://github.com/grace2riku/EVKartArduinoSimulink.git]
 EVカートのSimulinkモデルについて説明します。@<br>{}
-モデルの説明はC言語のソースコードと比較することで理解しやすくなると考えました。C言語のソースコードは筆者のGitHubリポジトリ@<fn>{github_EVKartArduinoIDE}に置いてありますので適宜利用してください。@<br>{}
-モデル（拡張子は*.slx）も図で載せていますがGitHub@<fn>{github_EVKartArduinoSimulink}に置いています。こちらも適宜利用してください。
-モデルはMATLAB・Simulinkがないと見ることができません。モデルとはどのようなものかイメージいただくためレポートファイルを用意しました。
-レポートファイルはHTML形式なのでブラウザで確認できます。レポートファイルを参照すればモデルがどんなものか理解できると思います。
+モデルの説明はC言語のソースコードと比較することで理解しやすくなるかもしれないと考えました。C言語のソースコードは筆者のGitHubリポジトリ@<fn>{github_EVKartArduinoIDE}に置いてありますので適宜利用してください。@<br>{}
+本書にモデルも図で載せていますがGitHub@<fn>{github_EVKartArduinoSimulink}にも置いています。こちらも適宜利用してください。
+モデル（拡張子は*.slx）はMATLAB・Simulinkがないと見ることができません。モデルとはどのようなものかイメージいただくためブラウザで見れるレポートファイルを用意しました。
+
+ * モデルレポートファイルのパス：ModelReport/ev_kart.html
+
+レポートファイルを参照すればモデルがどんなものかなんとなく理解できると思います。
 
 == モデル全体図
 @<img>{EvKartModel_topLayer}はEVカートのモデル全体図です。
@@ -13,29 +16,22 @@ EVカートのSimulinkモデルについて説明します。@<br>{}
 //image[EvKartModel_topLayer][モデル全体図]{
 //}
 @<img>{EvKartModel_topLayer}に四角がたくさんありますがこれが「ブロック」です。
-
 ブロックは機能毎にたくさんあります。
-
 Simulinkモデルはブロックを配置・設定し、ブロック同士をつないで作成します。
-
 希望する制御をおこなうモデルが完成したらシミュレーションで動作確認します。
-
 シミュレーションが問題なければビルドし、オブジェクトモジュールを作成します。
-
 CPUにオブジェクトモジュールを書き込み、スタンドアロンで動作するか確認します。
-
 以上が今回実施したモデルベース開発の作業の流れです。
 
+以降で各機能ブロック毎に動作説明します。
 
-次に各機能ブロック毎に動作説明します。
+== モーター位置取得機能
+@<img>{ns_pole_detect}の枠内部はモーター位置を取得する機能です。
 
-== N・S極位置取得機能
-@<img>{ns_pole_detect}の赤枠内部はN・S極位置取得する機能です。
-
-//image[ns_pole_detect][N・S極位置取得機能（赤枠内部）]{
+//image[ns_pole_detect][モーター位置取得機能（枠内部）]{
 //}
 
-Digital Inputブロックを使用し、ポーリングでU相・V相・W相ホールセンサのレベルを読み込みます。
+Digital Inputブロックを使用し、ポーリングで3つのホールセンサのレベルを読み込みます。
 
 @<list>{readHallSensor}はC言語のソースコードです。
 //listnum[readHallSensor][ホールセンサーレベル読み込み処理部分]{
@@ -52,7 +48,7 @@ Simulinkのブロック名はDigital InputでArduino IDEの関数名はdigitalRe
 若干名前が違いますがモデルのブロックの方も機能を想像できる名称となっています。
 
 == PWM通電パターン取得機能
-@<img>{GetPWMPattern_topLayer}の赤枠内部はPWM通電パターン取得機能のトップ階層です。
+@<img>{GetPWMPattern_topLayer}の枠内部はPWM通電パターン取得機能のトップ階層です。
 //image[GetPWMPattern_topLayer][PWM通電パターン機能（トップ階層）]{
 //}
 PWM通電パターン取得の制御ロジックはSubsystemブロック内部で実現しています。
@@ -60,7 +56,7 @@ PWM通電パターン取得の制御ロジックはSubsystemブロック内部�
 @<img>{GetPWMPattern}はPWM通電パターン取得機能のSubsystemブロック内部です。
 //image[GetPWMPattern][PWM通電パターン取得]{
 //}
-この階層でN・S極位置から通電パターンを取得しています。
+この階層でモーター位置から通電パターンを取得しています。
 
 === ホールセンサーパターン取得機能
 @<img>{GethallsensorPattern}はホールセンサーパターン取得機能です。
@@ -80,10 +76,9 @@ U相、V相、W相ホールセンサーのレベルからホールセンサー�
 6			1		0		0		0	0	PWM	0	1	0
 //}
 
-たとえばHall Wが1、Hall Vが0、Hall Uが1だった場合、「5（2進数で表現すると0101）」がホールセンサーのパターンになります。
+たとえばHall Wが1、Hall Vが0、Hall Uが1だった場合、「5（2進数で表現すると101）」がホールセンサーのパターンになります。
 このホールセンサーパターンからモーターの現在位置を知ることができ、どう制御すればモーターが回るのか設定すべき通電パターンもわかります。
 モデルではHall Wを左に2bit、Hall Vを左に1bitシフトし、ホールセンサーのパターンとしています。
-
 @<list>{readHallSensor}ではホールセンサU相を0bit目、V相を1bit目、W相を2bit目に割り当てています。
 モデルと同様の処理をしていることがわかります。
 
@@ -93,11 +88,9 @@ U相、V相、W相ホールセンサーのレベルからホールセンサー�
 //image[ConvHallSensorPattern2Stage][ホールセンサーパターン→通電ステージ変換]{
 //}
 ホールセンサーパターンがどの通電ステージに該当するのか変換します。
-
 具体的には@<table>{hallpattern_fet_stage_table}のHall W、Hall V、Hall Uから通電ステージを求めます。
 モデルではIndex Vectorブロックを使用し実現しています。
 Index VectorはC言語でいう配列といえます。1つ目の入力に0始まりのインデックスを入力すると2つのテーブルから該当するインデックスの要素を取得できます。
-
 ホールセンサーパターンW、V、Uが5（2進数で101）の場合は定数HallPatternTableの5番目の要素「1」が取得できます。
 Index Vectorの1つ目の入力に異常なホールセンサーパターンが入力された場合は0を返します。
 
@@ -106,28 +99,26 @@ Index Vectorの1つ目の入力に異常なホールセンサーパターンが�
 @<img>{SelectPWMPattern}は通電ステージ→通電パターン選択機能です。
 //image[SelectPWMPattern][通電ステージ→通電パターン選択機能]{
 //}
-ステージによりどのFETをPWM制御するか、ON・OFFするか通電パターンを選択します。
+通電ステージによりどのFETをPWM制御するか、ON・OFFするか通電パターンを選択します。
 Switch Caseブロックで通電ステージに合わせた通電パターンのcase条件が選択されます。
 異常な通電ステージ（0）の場合、defaultケースの通電パターンが選択となります。
-defaultケースではすべてのFETをOFFし、通電を行いません。
+defaultケースではすべてのFETをOFFし通電しません。
 
 ==== 通電ステージ1
 @<img>{PWMPattern_Stage_1}は通電ステージ1の制御ブロックです。
 //image[PWMPattern_Stage_1][通電ステージ1]{
 //}
-ステージによりどのFETをPWM制御するか、ON・OFFするか決定します。
-通電ステージ1の場合は、
+通電ステージによりどのFETをPWM制御するか、ON・OFFするか決定します。
+通電ステージ1の場合は次の通電パターンです。
 
  * U相High側FETがPWM制御、V相Low側FETがHighレベル、その他のFETはLowレベル
 
-の通電パターンです。
 6つの信号をBus Creatorブロックでバス化（1本の信号線として扱えるように）しています。
 上からU相High側FET、V相High側FET、W相High側FET、U相Low側FET、V相Low側FET、W相Low側FETの信号です。
 後段のブロックで各信号線を各FETに接続しています。
 通電ステージ2〜6も同様にSwitchCase Blockのcase条件にFETの通電パターンを記述しています。
 
 @<list>{setFETPattern}はC言語のソースコードです。
-
 通電ステージ1のときanalogWrite関数で@<table>{hallpattern_fet_stage_table}のとおりに通電設定している処理になっています。
 //listnum[setFETPattern][FET通電パターン設定 通電ステージ1]{
 void setFETDrivePattern()
@@ -140,7 +131,8 @@ void setFETDrivePattern()
 	
 	switch(hallSensorPosition) {
 		/* ホールセンサ入力位置:W=1, V=0, U=1 */
-		case HALL_SENSOR_POSITION_5: /* FET通電ステージ1:UH=PWM, VH=0, WH=0, UL=0, VL=1, WL=0 */
+		/* FET通電ステージ1:UH=PWM, VH=0, WH=0, UL=0, VL=1, WL=0 */
+		case HALL_SENSOR_POSITION_5: 
 			analogWrite(FET_UH_PORT, pwmDuty);
 			analogWrite(FET_VH_PORT, 0);
 			analogWrite(FET_WH_PORT, 0);
@@ -170,7 +162,8 @@ void setFETDrivePattern()
 		/* 省略 */
 
 		/* ホールセンサ入力位置:W=0, V=0, U=1 */
-		case HALL_SENSOR_POSITION_1: /* FET通電ステージ2:UH=PWM, VH=0, WH=0, UL=0, VL=0, WL=1 */
+		/* FET通電ステージ2:UH=PWM, VH=0, WH=0, UL=0, VL=0, WL=1 */
+		case HALL_SENSOR_POSITION_1: 
 		analogWrite(FET_UH_PORT, pwmDuty);
 		analogWrite(FET_VH_PORT, 0);
 		analogWrite(FET_WH_PORT, 0);
@@ -200,7 +193,8 @@ void setFETDrivePattern()
 		/* 省略 */
 
 		/* ホールセンサ入力位置:W=0, V=1, U=1 */
-		case HALL_SENSOR_POSITION_3: /* FET通電ステージ3:UH=0, VH=PWM, WH=0, UL=0, VL=0, WL=1 */
+		/* FET通電ステージ3:UH=0, VH=PWM, WH=0, UL=0, VL=0, WL=1 */
+		case HALL_SENSOR_POSITION_3: 
 		analogWrite(FET_UH_PORT, 0);
 		analogWrite(FET_VH_PORT, pwmDuty);
 		analogWrite(FET_WH_PORT, 0);
@@ -230,7 +224,8 @@ void setFETDrivePattern()
 		/* 省略 */
 
 		/* ホールセンサ入力位置:W=0, V=1, U=0 */
-		case HALL_SENSOR_POSITION_2: /* FET通電ステージ4:UH=0, VH=PWM, WH=0, UL=1, VL=0, WL=0 */
+		/* FET通電ステージ4:UH=0, VH=PWM, WH=0, UL=1, VL=0, WL=0 */
+		case HALL_SENSOR_POSITION_2: 
 			analogWrite(FET_UH_PORT, 0);
 			analogWrite(FET_VH_PORT, pwmDuty);
 			analogWrite(FET_WH_PORT, 0);
@@ -261,7 +256,8 @@ void setFETDrivePattern()
 		/* 省略 */
 
 		/* ホールセンサ入力位置:W=1, V=1, U=0 */
-		case HALL_SENSOR_POSITION_6: /* FET通電ステージ5:UH=0, VH=0, WH=PWM, UL=1, VL=0, WL=0 */
+		/* FET通電ステージ5:UH=0, VH=0, WH=PWM, UL=1, VL=0, WL=0 */
+		case HALL_SENSOR_POSITION_6: 
 			analogWrite(FET_UH_PORT, 0);
 			analogWrite(FET_VH_PORT, 0);
 			analogWrite(FET_WH_PORT, pwmDuty);
@@ -291,7 +287,8 @@ void setFETDrivePattern()
 		/* 省略 */
 
 		/* ホールセンサ入力位置:W=1, V=0, U=0 */
-		case HALL_SENSOR_POSITION_4: /* FET通電ステージ6:UH=0, VH=0, WH=PWM, UL=0, VL=1, WL=0 */
+		/* FET通電ステージ6:UH=0, VH=0, WH=PWM, UL=0, VL=1, WL=0 */
+		case HALL_SENSOR_POSITION_4: 
 			analogWrite(FET_UH_PORT, 0);
 			analogWrite(FET_VH_PORT, 0);
 			analogWrite(FET_WH_PORT, pwmDuty);
@@ -302,8 +299,8 @@ void setFETDrivePattern()
 //}
 
 ==== 異常
-@<img>{PWMPattern_Stage_deafult}は異常の場合の制御ブロックです。
-//image[PWMPattern_Stage_deafult][通電ステージ異常]{
+@<img>{PWMPattern_Stage_default}は異常の場合の制御ブロックです。
+//image[PWMPattern_Stage_default][通電ステージ異常]{
 //}
 
 @<list>{setFETPattern_stage_default}はC言語のソースコードです。
@@ -335,20 +332,19 @@ void setFETDrivePattern()
 
 == FET駆動機能
 @<img>{FETDrive}はFET駆動機能です。
-//image[FETDrive][FET駆動機能（赤枠内部）]{
+//image[FETDrive][FET駆動機能（枠内部）]{
 //}
-@<hd>{PWM通電パターン取得機能}出力の複数の信号（バス信号）をBusSelectorブロックで1つの信号として取り出します。
+@<hd>{PWM通電パターン取得機能}出力の複数の信号（バス信号）をBusSelectorブロックで1つずつ信号として取り出します。
 上からU相High側FET、V相High側FET、W相High側FET、U相Low側FET、V相Low側FET、W相Low側FETの信号です。
 
 High側FETは通電パターンによりPWM制御することがあるためPWMブロックを接続しています。
 Low側FETは出力端子のレベルを制御するためDigital Writeブロックを接続しています。
-
 C言語のソースコードは@<list>{setFETPattern}でFET High側はanalogWrite、FET Low側はdigitalWrite関数を使っています。
 
 
 == スロットル開度取得機能
 @<img>{GetAccelValue}はスロットル開度取得機能です。
-//image[GetAccelValue][スロットル開度取得機能（赤枠内部）]{
+//image[GetAccelValue][スロットル開度取得機能（枠内部）]{
 //}
 カートの速度調整はスロットルを使います。
 スロットルの開度はインバーター基板に0〜5Vの電圧で入力されAnalog InputブロックでAD変換しています。
@@ -376,7 +372,7 @@ void expireTimer() {
 
 == パイロットLED点滅機能
 @<img>{TogglePilotLED_top}はパイロットLED点滅機能のトップ階層です。
-//image[TogglePilotLED_top][パイロットLED点滅機能トップ階層（赤枠内部）]{
+//image[TogglePilotLED_top][パイロットLED点滅機能トップ階層（枠内部）]{
 //}
 書き込まれたモデルが動作しているか目視確認する意図でArduino MEGAに実装されているLEDを2秒周期で点滅しています。
 モーター制御とは関係がない動作です。
