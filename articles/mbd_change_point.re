@@ -36,6 +36,9 @@ Arduino基板表面にあるピンヘッダを治具基板に指す形になる�
 これでモデルベース開発をおこなうためのハードウェアの準備が完了です。
 
 
+//embed[latex]{
+\clearpage
+//}
 === CPU
 ==== Arduino MEGA
 デフォルトのEVカートCPU基板からArduino MEGAに変更します。
@@ -50,8 +53,8 @@ Arduino基板表面にあるピンヘッダを治具基板に指す形になる�
 
  * Arduinoは安いから。安価なArduino UNOではなく、Arduino MEGAを選択した理由は後述しているシミュレーションができるから。
 
-==== Arduino MEGAピン配置
 
+==== Arduino MEGAピン配置
 @<img>{arduino_mega_pinout}はArduino MEGAのピン配置です。
 //image[arduino_mega_pinout][Arduino MEGAピン配置]{
 //}
