@@ -16,12 +16,61 @@ EVカートのSimulinkモデルについて説明します。@<br>{}
 //image[EvKartModel_topLayer][モデル全体図]{
 //}
 @<img>{EvKartModel_topLayer}に四角がたくさんありますがこれが「ブロック」です。
-ブロックは機能毎にたくさんあります。
-Simulinkモデルはブロックを配置・設定し、ブロック同士をつないで作成します。
-希望する制御をおこなうモデルが完成したらシミュレーションで動作確認します。
-シミュレーションが問題なければビルドし、オブジェクトモジュールを作成します。
-CPUにオブジェクトモジュールを書き込み、スタンドアロンで動作するか確認します。
-以上が今回実施したモデルベース開発の作業の流れです。
+ブロックは機能毎にたくさんあります。ブロックはSimulinkのメニュー　シミュレーション -> ライブラリブラウザー から確認できます。
+@<img>{blocklibopen}は操作画面です。
+//image[blocklibopen][ブロックを確認するためライブラリブラウザーを選択]{
+//}
+
+ライブラリブラウザーを選択すると@<img>{simulink_math_operations}の画面となります。
+//image[simulink_math_operations][Simulink ライブラリ ブラウザー]{
+//}
+@<img>{simulink_math_operations}を見ると「Simulink」、「Simulink Support Package for Arduino Hardware」のツリーがあります。
+ツリーの下に階層があります。機能毎にブロックが分類されていると想像できます。Simulinkモデルはこれらのブロックを組み合わせて作成していきます。
+
+いくつかSimulinkブロックライブラリーを紹介します。@<img>{simulink_math_operations}ではSimulink/Math Operations が選択されています。
+名前から想像できるかと思いますが、こちらは数学のライブラリです。たとえば加算を行うAdd、割り算を行うDivideブロックなどがあります。
+@<img>{simulink_Sinks}はSimulink/Sinksが選択されています。
+//image[simulink_Sinks][Simulink/Sinks]{
+//}
+Simulink/Sinksではこの後のモデルの図でも頻繁に登場するDisplayブロック、Scopeブロックがあります。
+どちらのブロックもシミュレーションのときにモデルの状態を確認する用途で使います。
+
+「Simulink Support Package for Arduino Hardware」もいくつかブロックライブラリーを紹介します。
+「Simulink Support Package for Arduino Hardware」はArduinoのペリフェラルを制御するためのブロックです。
+@<img>{simulink_Sinks}はSimulink Support Package for Arduino Hardware/Commonが選択されています。
+Commonの他にもEthernet Shield、Sensors、WiFiなどのブロックがあります。
+//image[simulink_arduino_common][Simulink Support Package for Arduino Hardware/Common]{
+//}
+Simulink Support Package for Arduino Hardware/Commonの中には次のブロックがあります。
+
+ * Analog Input : AD変換
+ * Digital Input : GPIO入力
+ * Digital Output : GPIO出力
+ * PWM : PWM出力
+
+これらのブロックをSimulinkにドラッグ&ドロップし、パラメータの変更が必要であれば変更します。
+@<img>{AnalogInputDrop}はSimulinkにAnalog Inputブロックをドラッグ&ドロップしたときの図です。
+//image[AnalogInputDrop][Analog InputをSimulinkにドラッグ&ドロップ]{
+//}
+@<img>{AnalogInputDrop}は「Pin: 4」と表示されています。
+今回のEVカートのピン配置は「A0」ピンにスロットルのアナログ電圧を供給する仕様にしたためAnalog Inputブロックの設定変更が必要です。
+Analog Inputブロックをダブルクリックすると@<img>{AnalogInputDefault}になります。
+//image[AnalogInputDefault][Analog Inputブロックのデフォルトパラメータ]{
+//}
+ここの「Pin number」を4から0に変更します。
+@<img>{AnalogInputChange}はピン番号を変更したあとです。
+//image[AnalogInputChange][Analog InputブロックのPin番号の変更]{
+//}
+このようにブロックの配置・パラメータ設定を行います。
+
+今回実施したモデルベース開発の作業の流れを簡単に説明します。
+
+ * ブロックを配置する
+ * ブロックのパラメータ変更が必要であれば変更する
+ * ブロック同士をつなぐ
+ * 希望する制御をおこなうモデルが完成したらシミュレーションで動作確認する
+ * シミュレーションが問題なければビルドし、オブジェクトモジュールを作成する
+ * CPUにオブジェクトモジュールを書き込み、スタンドアロンで動作確認する
 
 以降で各機能ブロック毎に動作説明します。
 
