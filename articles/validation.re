@@ -114,33 +114,33 @@ W相を2bit、V相は1bit、U相は0bit左シフトした結果、「5」とな�
 組込みソフトウェア開発のprintfデバッグのようです。
 
 Displayブロックでモデルの状態を確認していましたが、同様のことがScopeブロックでできます。
-@<img>{scope_setting}はscopeブロックに@<img>{HallandPWMControl}、@<table>{hallpattern_fet_stage_table}の信号を接続したモデルです。
-//image[scope_setting][scopeブロックでモニタリングする例]{
+@<img>{scope_setting}はScopeブロックに@<img>{HallandPWMControl}、@<table>{hallpattern_fet_stage_table}の信号を接続したモデルです。
+//image[scope_setting][Scopeブロックでモニタリングする例]{
 //}
 
-これでシミュレーションを実行しscopeブロックをダブルクリックすると@<img>{hall-stage_scope}の画面になります。
-//image[hall-stage_scope][scopeブロックの表示結果]{
+これでシミュレーションを実行しScopeブロックをダブルクリックすると@<img>{hall-stage_scope}の画面になります。
+//image[hall-stage_scope][Scopeブロックの表示結果]{
 //}
 オシロスコープのような画面が表示されます。
 一番上の波形は通電ステージ番号です。通電ステージ番号が1から6に変化するとHigh側FET、Low側FETの信号が
 @<img>{HallandPWMControl}、@<table>{hallpattern_fet_stage_table}のとおりになっていることが確認できます。@<br>{}
 ※PWM設定値は0の場合の図なのでPWMのパルス部分は0固定になっています。@<br>{}
-このようにscopeブロックはタイミングチャートで規定される各信号を確認するときに便利です。
+このようにScopeブロックはタイミングチャートで規定される各信号を確認するときに便利です。
 
 == スロットル開度の取得
 スロットル開度は電圧0〜5VをAD変換して決めます。SimulinkモデルでAD変換を行うAnalog Inputブロックは10bitです。
 0Vが0（0x000）、2.5Vが511（0x1FF）、5Vが1023（0x3FF）近辺の値に変換されていればOKです。
 任意3点の電圧をAD変換した結果を次に示します。
 
-@<img>{Throttle_256}は1.302VをAD変換した結果です。
+@<img>{Throttle_256}のDisplay Throttle Voltageは1.302VをAD変換した結果です。
 //image[Throttle_256][1.302VをAD変換した結果]{
 //}
 
-@<img>{Throttle_512}は2.594VをAD変換した結果です。
+@<img>{Throttle_512}のDisplay Throttle Voltageは2.594VをAD変換した結果です。
 //image[Throttle_512][2.594VをAD変換した結果]{
 //}
 
-@<img>{Throttle_1000}は5.03VをAD変換した結果です。
+@<img>{Throttle_1000}のDisplay Throttle Voltageは5.03VをAD変換した結果です。
 //image[Throttle_1000][5.03VをAD変換した結果]{
 //}
 

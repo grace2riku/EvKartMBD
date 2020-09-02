@@ -94,13 +94,16 @@ void setFETDrivePattern()
 
 //}
 Simulinkのブロック名はDigital InputでArduino IDEの関数名はdigitalReadとなっています。
-若干名前が違いますがモデルのブロックの方も機能を想像できる名称となっています。
+若干名称が違いますがモデルのブロックの方も機能を想像できる名称となっています。
 
 == PWM通電パターン取得機能
 @<img>{GetPWMPattern_topLayer}の枠内部はPWM通電パターン取得機能のトップ階層です。
 //image[GetPWMPattern_topLayer][PWM通電パターン機能（トップ階層）]{
 //}
 PWM通電パターン取得の制御ロジックはSubsystemブロック内部で実現しています。
+SubsystemブロックはC言語の関数と似ています。Subsystemブロックを使わなくてもモデルは書けますが、
+@<img>{GetPWMPattern}のブロックが@<img>{GetPWMPattern_topLayer}と同じ階層に配置されることになり、
+モデルが煩雑になる・見にくくなることからSubsystemブロック内部に機能を集約します。
 
 @<img>{GetPWMPattern}はPWM通電パターン取得機能のSubsystemブロック内部です。
 //image[GetPWMPattern][PWM通電パターン取得]{
@@ -139,7 +142,7 @@ U相、V相、W相ホールセンサーのレベルからホールセンサー�
 ホールセンサーパターンがどの通電ステージに該当するのか変換します。
 具体的には@<table>{hallpattern_fet_stage_table}のHall W、Hall V、Hall Uから通電ステージを求めます。
 モデルではIndex Vectorブロックを使用し実現しています。
-Index VectorはC言語でいう配列といえます。1つ目の入力に0始まりのインデックスを入力すると2つのテーブルから該当するインデックスの要素を取得できます。
+Index VectorはC言語でいう配列です。1つ目の入力に0始まりのインデックスを入力すると2つのテーブルから該当するインデックスの要素を取得できます。
 ホールセンサーパターンW、V、Uが5（2進数で101）の場合は定数HallPatternTableの5番目の要素「1」が取得できます。
 Index Vectorの1つ目の入力に異常なホールセンサーパターンが入力された場合は0を返します。
 
@@ -401,7 +404,7 @@ AD変換値はFET High側のPWMブロックの設定値として使用してい�
 AD変換値が大きいほどPWM制御のOn Duty幅も大きく、モータ回転数も高くなりカートは早く走ります。
 トップ階層でDataStoreWrite、DataStoreMemoryブロックでスロットル開度を保存しています。
 保存したスロットル開度は@<img>{PWMPattern_Stage_1}通電ステージ1〜6のDataStoreReadブロックで参照し、FET High側のPWM設定値にしています。
-スロットル開度はC言語のグローバル関数のように使っています。
+スロットル開度はC言語のグローバル変数のように使っています。
 
 AD変換値をDivideブロックで4で割っていますが、これはAnalog Inputブロック分解能10bitをPWMブロックの分解能8bitに合わせているためです。
 
