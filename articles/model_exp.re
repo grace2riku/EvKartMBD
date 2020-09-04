@@ -466,3 +466,24 @@ void expireTimer() {
 	}	
 }
 //}
+
+====[column]■モデルベース開発はいくらかかるの?（個人向けHomeライセンスの場合）
+今回モデルベース開発にMathWork社の個人向けHomeライセンスでMATLAB、Simulink、Simulink Support Package for Arduino Hardwareの3つのソフトウェアを使いました。
+参考までに開発環境のコストを紹介します。
+執筆時点のMATLAB、Simulinkの価格は次のとおりです。@<br>{}
+*Simulink Support Package for Arduino Hardwareは無料でダウンロード可能です。
+
+ * MATLAB：15,500円
+ * Simulink：4,490円
+
+価格は次のリンクから確認可能です。@<br>{}
+@<href>{https://jp.mathworks.com/store/link/products/home/new?s_iid=htb_buy_gtwy_cta4}@<br>{}
+購入すると1年間の製品ライセンスが付与されます。次年度も継続して使う場合は更新が必要です。
+@<img>{mbd_tool_license}は更新費用です。筆者のアカウント画面のスクリーンショットです。
+//image[mbd_tool_license][MATLAB, Simulinkの年間更新費用]{
+//}
+
+ * MATLAB：7,490円
+ * Simulink：2,290円
+
+====[/column]
