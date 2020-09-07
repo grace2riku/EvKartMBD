@@ -2,9 +2,11 @@
 //footnote[github_EVKartArduinoIDE][https://github.com/grace2riku/EVKartArduinoIDE.git]
 //footnote[github_EVKartArduinoSimulink][https://github.com/grace2riku/EVKartArduinoSimulink.git]
 EVカートのSimulinkモデルについて説明します。@<br>{}
-モデルの説明はC言語のソースコードと比較することで理解しやすくなるかもしれないと考えました。C言語のソースコードは筆者のGitHubリポジトリ@<fn>{github_EVKartArduinoIDE}に置いてありますので適宜利用してください。@<br>{}
+モデルの説明はC言語のソースコードと比較することで理解しやすくなるかもしれないと考えました。
+C言語のソースコードは筆者のGitHubリポジトリ@<fn>{github_EVKartArduinoIDE}に置いてありますので適宜利用してください。@<br>{}
 本書にモデルも図で載せていますがGitHub@<fn>{github_EVKartArduinoSimulink}にも置いています。こちらも適宜利用してください。
-モデル（拡張子は*.slx）はMATLAB・Simulinkがないと見ることができません。モデルとはどのようなものかイメージいただくためブラウザで見れるレポートファイルを用意しました。
+モデル（拡張子は*.slx）はMATLAB・Simulinkがないと見ることができません。
+モデルとはどのようなものかイメージいただくためブラウザで見れるレポートファイルを用意しました。
 
  * モデルレポートファイルのパス：ModelReport/ev_kart.html
 
@@ -72,7 +74,7 @@ Analog Inputブロックをダブルクリックすると@<img>{AnalogInputDefau
  * シミュレーションが問題なければビルドし、オブジェクトモジュールを作成する
  * CPUにオブジェクトモジュールを書き込み、スタンドアロンで動作確認する
 
-以降で各機能ブロック毎に動作説明します。
+以降から各機能ブロック毎に動作説明します。
 
 == モーター位置取得機能
 @<img>{ns_pole_detect}の枠内部はモーター位置を取得する機能です。
@@ -81,7 +83,6 @@ Analog Inputブロックをダブルクリックすると@<img>{AnalogInputDefau
 //}
 
 Digital Inputブロックを使用し、ポーリングで3つのホールセンサのレベルを読み込みます。
-
 @<list>{readHallSensor}はC言語のソースコードです。
 //listnum[readHallSensor][ホールセンサーレベル読み込み処理部分]{
 void setFETDrivePattern()
@@ -93,7 +94,7 @@ void setFETDrivePattern()
 						digitalRead(HALL_U_PORT);
 
 //}
-Simulinkのブロック名はDigital InputでArduino IDEの関数名はdigitalReadとなっています。
+Simulinkのブロック名はDigital InputでC言語の関数名はdigitalReadとなっています。
 若干名称が違いますがモデルのブロックの方も機能を想像できる名称となっています。
 
 == PWM通電パターン取得機能
@@ -142,7 +143,7 @@ U相、V相、W相ホールセンサーのレベルからホールセンサー�
 ホールセンサーパターンがどの通電ステージに該当するのか変換します。
 具体的には@<table>{hallpattern_fet_stage_table}のHall W、Hall V、Hall Uから通電ステージを求めます。
 モデルではIndex Vectorブロックを使用し実現しています。
-Index VectorはC言語でいう配列です。1つ目の入力に0始まりのインデックスを入力すると2つのテーブルから該当するインデックスの要素を取得できます。
+Index VectorはC言語でいう配列です。1つ目の入力に0始まりのインデックスを入力すると2つ目のテーブルから該当するインデックスの要素を取得できます。
 ホールセンサーパターンW、V、Uが5（2進数で101）の場合は定数HallPatternTableの5番目の要素「1」が取得できます。
 Index Vectorの1つ目の入力に異常なホールセンサーパターンが入力された場合は0を返します。
 
@@ -403,7 +404,7 @@ C言語のソースコードは@<list>{setFETPattern}でFET High側はanalogWrit
 AD変換値はFET High側のPWMブロックの設定値として使用しています。
 AD変換値が大きいほどPWM制御のOn Duty幅も大きく、モータ回転数も高くなりカートは早く走ります。
 トップ階層でDataStoreWrite、DataStoreMemoryブロックでスロットル開度を保存しています。
-保存したスロットル開度は@<img>{PWMPattern_Stage_1}通電ステージ1〜6のDataStoreReadブロックで参照し、FET High側のPWM設定値にしています。
+保存したスロットル開度は@<img>{PWMPattern_Stage_1}通電ステージ1〜6のDataStoreReadブロック（名称：PWMDataRead）で参照し、FET High側のPWM設定値にしています。
 スロットル開度はC言語のグローバル変数のように使っています。
 
 AD変換値をDivideブロックで4で割っていますが、これはAnalog Inputブロック分解能10bitをPWMブロックの分解能8bitに合わせているためです。
@@ -428,19 +429,45 @@ void expireTimer() {
 //}
 書き込まれたモデルが動作しているか目視確認する意図でArduino MEGAに実装されているLEDを2秒周期で点滅しています。
 モーター制御とは関係がない動作です。
-LED点滅のロジックはSubsystemブロック内部で実行しています。
-この機能はPulse Generatorブロックにより1秒周期で呼び出されます。
+LED点滅のロジックはTriggered Subsystemブロック内部で実行しています。
 
-@<img>{TogglePilotLED}はパイロットLED点滅機能の制御ロジックです。
+Pulse Generator、Triggered Subsystemブロックについて説明します。
+Pulse Generatorブロックは文字とおりパルスを生成するブロックです。
+パイロットLED点滅機能では1秒周期のパルスを作り、Triggered Subsystemブロックの動作トリガとして利用しています。
+@<img>{PulseGeneratorSetting}はPulse Generatorブロックの設定画面です。
+//image[PulseGeneratorSetting][Pulse Generatorブロックの設定画面]{
+//}
+周期（秒）が1、パルス幅（周期の割合（%））が50と設定しているので、@<br>{}
+
+ * 1秒周期のDuty50%のパルス波形
+
+ が生成されます。
+
+Triggered Subsystemブロックはトリガによって動作するSubsystemブロックです。
+Subsystemブロックは@<hd>{PWM通電パターン取得機能}でも使用しました。
+Triggered Subsystemブロックは外部からのトリガによってブロック内部のロジックを実行する点がSubsystemブロックと違います。
+パイロットLED点滅機能ではPulse GeneratorブロックのパルスをTriggered Subsystemブロックの動作トリガとして利用しています。
+@<img>{TriggerSetting}はTriggered Subsystemブロック内部 Triggerブロックの設定画面です。
+//image[TriggerSetting][Triggered Subsystemブロック内部 Triggerブロックの設定画面]{
+//}
+トリガー タイプを立ち上がりに設定しています。この設定でTriggered Subsystemブロックに入力している
+パルスの立ち上がりでブロック内部が動作します。
+@<img>{TriggerSettingSelect}はTriggerブロック トリガー タイプの選択肢です。
+//image[TriggerSettingSelect][Triggerブロック トリガー タイプの選択肢]{
+//}
+トリガー タイプは立ち上がりの他に立ち下がり、両方、関数呼び出しの合計4種類から選択できます。
+
+@<img>{TogglePilotLED}はTriggered Subsystemブロック内部のパイロットLED点滅機能の制御ロジックです。
 //image[TogglePilotLED][パイロットLED点滅機能の制御ロジック]{
 //}
-固定値1と前回の出力値（初期値は0）のXOR論理演算を行います。
+固定値1と前回の出力値（初期値は0）の排他的論理和（XOR）演算を行います。
 結果、LEDが点滅します。
-このSubsystemは1秒周期で呼び出されますが、Pulse Generatorブロックの「立ち上がり」で動作するよう設定しています。
-その結果、2秒周期でLEDは点滅します。
+このTriggered Subsystemは1秒周期でパルスが入力されますが、「立ち上がり」で動作するよう設定しているので2秒周期でLEDは点滅します。
+トリガー タイプを「両方」にすれば1秒周期でLEDは点滅します。
 
-@<list>{blinkpilotLed}はパイロットLED点滅しています。
-expireTimerは10msecごとに呼び出され、100回カウントしたらLEDを反転しています。
+@<list>{blinkpilotLed}はパイロットLED点滅のC言語ソースコードです。
+expireTimerは10msecごとに呼び出され、100回カウントしたらLED出力を反転します。
+よってこのLEDは1秒周期で点滅します。
 
 //listnum[blinkpilotLed][スロットル開度取得]{
 // EvKartPin.h
