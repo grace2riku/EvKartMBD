@@ -467,7 +467,7 @@ Triggered Subsystemブロックは外部からのトリガによってブロッ�
 
 @<list>{blinkpilotLed}はパイロットLED点滅のC言語ソースコードです。
 expireTimerは10msecごとに呼び出され、100回カウントしたらLED出力を反転します。
-よってこのLEDは1秒周期で点滅します。
+よってこのLEDは1秒周期で点滅します（モデルとC言語の動作が異なります）。
 
 //listnum[blinkpilotLed][スロットル開度取得]{
 // EvKartPin.h
